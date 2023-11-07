@@ -1,3 +1,4 @@
+# This was my first attempt at this project, using PIL(pillow) but I didnt like how rigid pillow was when trying to edit individual pixels, and also pillowds docs werent the best so it made it tough to understand what was going on.
 from PIL import Image
 import sys
 
@@ -26,44 +27,51 @@ def input_file():
     try:
         return sys.argv[1]
     except Exception as e:
-        print(f"\nThe following Error has occured in input_file():\n{e}\n")
+        print(f"\nno input file detected\n{e}\n")
 
 # takes an image and resolution, and returns a copy that is now the desired size
 def pixl8(im, res = (64, 64)):
-    # im_size = im.size
     small = im.resize(res, Image.NEAREST)
-    # new_im = small.resize(im_size, Image.NEAREST)
     return small
 
-# takes an image and palette and returns an image which has been re-colored so that it is within the palette
-def palettizer(im, palette):
-    palette_v = palette.convert("P")
-    im_quantized = im.quantize(palette=palette_v)
-    im_palettized = im_quantized.convert("RGB")
-    return im_quantized
+def euclidean_distance(c1,c2):
+    r1, g1, b1 = c1
+    r2, g2, b2 = c2
+    return((r1-r2)**2 + (g1-g2)**2 + (b1-b2)**2)
+    
 
+def nearest_pixel(pix, pal):
+    min_distance = float('inf')
+    closest = (0,0,0)
+    for c in pal:
+        d = euclidean_distance(pix, c) 
+        if d < min_distance:
+            min_distance = d
+            closest = c
+    return closest
+
+# takes an image and palette and returns a recolored image that is within the palette
+def palettizer(im, p):
+    p = p.convert("P")
+    p1 = p.getpalette()
+    p2 = [p1[i:i + 3] for i in range(0, len(p1), 3)]
+    im_d = list(im.getdata())
+    for pix in im_d:
+        pix = nearest_pixel(pix, p2)
+        print(pix)
+        #need to just turn this updated list of rgb values into a Image then i think it will work!
+    return im_d
 
 
 def main():
     sample_palette = get_image("./dreamscape8-1x.png")
-    try:
-        in_f_name = input_file()
-        og_image = get_image(in_f_name)
-        out_f_name = output_file_name()
-        im1 = pixl8(og_image)
-        im2 = palettizer(im1, sample_palette)
-        save_image(im2, out_f_name, og_image.format)
-        print(f"New image saved as {out_f_name}")
-    except Exception as e:
-        print(f"\nThe following error occured in main():\n{e}\n")
+    in_f_name = input_file()
+    og_image = get_image(in_f_name)
+    out_f_name = output_file_name()
+    im1 = pixl8(og_image)
+    im2 = palettizer(im1, sample_palette)
+    save_image(im2, out_f_name, og_image.format)
+    print(f"New image saved as {out_f_name}")
 
-def tests1():
-    test_palette = get_image("./dreamscape8-1x.png")
-    test_image = get_image("./matt-damon-the-departed-2006-2K2285Y.jpg")
-    im1 = pixl8(test_image)
-    im2 = palettizer(im1, test_palette)
-    im2.show()
 
 main()
-
-#trying to figure how to get the output image to look like the quantized image from palletizer but we need to convert it to RGB for some reason?
