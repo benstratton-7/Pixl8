@@ -1,4 +1,4 @@
-# This was my first attempt at this project, using PIL(pillow) but I didnt like how rigid pillow was when trying to edit individual pixels, and also pillowds docs werent the best so it made it tough to understand what was going on.
+# THIS IS A TEST THIS IS A TEST THIS IS A TEST THIS IS A TEST THIS IS A TEST THIS IS A TEST THIS IS A TEST THIS IS A TEST THIS IS A TEST THIS IS A TEST THIS IS A TEST 
 import math
 from PIL import Image
 import numpy as np
@@ -39,10 +39,9 @@ def pixl8(im, res = (32, 32)):
 def euclidean_distance(c1,c2):
     r1, g1, b1 = c1
     r2, g2, b2 = c2
-    return((r1-r2)**2 + (g1-g2)**2 + (b1-b2)**2)
-    
+    return math.sqrt((r1-r2)**2 + (g1-g2)**2 + (b1-b2)**2)
 
-def nearest_color(pix, pal):
+def nearest_color(pix, pal, tolerance=10):
     min_distance = float('inf')
     closest = (0,0,0)
     for c in pal:
@@ -61,25 +60,25 @@ def palettizer(im, p):
     p2 = [p1[i:i + 3] for i in range(0, len(p1), 3)]
     #turns the input image into a flattened array of rgb values
     im_d = np.asarray(im.getdata())
-    print('beginning:\n',im_d)
-    for pix in im_d:
-        #replaces each pixel with the  nearest palette color
-        pix = nearest_color(pix, p2)
-        #UNFINISHED: I think I need to make sure I am altering the array in place, because everything is running smoothly but the output image is not palettized. Check the update in place functionality of this loop!
-    print('afterloop:\n', im_d)
-    new_im = Image.fromarray(np.reshape(im_d, (height, width, 3)).astype('uint8'))
-    print('final:\n', new_im)
+    # im_0 = np.zeros(im_d.size)
+    # print('im as im_d:\n',im_d)
+    for x in range(len(im_d)):
+        nearest = nearest_color(im_d[x], p2)
+        im_d[x] = nearest
+    im_d_reshaped = im_d.reshape((height, width, 3)).astype('uint8')
+    im_d_reshaped = np.clip(im_d_reshaped, 0, 255).astype('uint8')
+    new_im = Image.fromarray(im_d_reshaped)
     return new_im
 
 def main():
     sample_palette = get_image("./dreamscape8-1x.png")
     in_f_name = input_file()
     og_image = get_image(in_f_name)
-    out_f_name = output_file_name()
     im1 = pixl8(og_image)
+    im1.save('shrink.png')
     im2 = palettizer(im1, sample_palette)
-    im2.save(out_f_name)
-    print(f"New image saved as {out_f_name}")
+    im2.save('both.png')
+    print(f"saved images")
 
 
 main()
