@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import filedialog
+from PIL import Image, ImageTk
 from main import *
 
 class SimpleWizard:
@@ -14,7 +15,7 @@ class SimpleWizard:
         welcome_frame = tk.Frame(master)
         tk.Label(welcome_frame, text="Pixl8", font=('Helvetica', 24)).pack(pady=10)
         tk.Label(welcome_frame, wraplength=300, font=('Helvetica', 12), justify="center", text="This is an image manipulation tool made with python. Input any jpg or png image file, select your settings, and pixl8 will create a perfectly scaled and colored pixel art asset for you").pack(pady=30, padx=10)
-        tk.Button(welcome_frame, text="Next", command=self.show_next_screen).pack(pady=30)
+        tk.Button(welcome_frame, text="Next", command=self.show_next_screen).pack(pady=30, anchor="s")
         self.screens.append(welcome_frame)
 
         # Image selection screen
@@ -22,44 +23,50 @@ class SimpleWizard:
         tk.Label(image_frame, text="Select an image file:").pack(pady=10)
         tk.Button(image_frame, text="Browse", command=self.browse_image).pack(pady=30)
         self.selected_image_path = tk.StringVar()
+        self.selected_image_path.set('./example images/matt-damon.jpg')
         self.image_label = tk.Label(image_frame, textvariable=self.selected_image_path)
         self.image_label.pack()
         # Dropdown for example images
-        example_images = ["example1.jpg", "example2.png", "example3.gif"]
+        example_images = ["./example images/matt-damon.jpg", "./example images/DALLE lighthouse.png", "./example images/knight.jpg"]
         example_dropdown = tk.OptionMenu(image_frame, self.selected_image_path, *example_images)
         example_dropdown.pack(pady=10)
 
-        tk.Button(image_frame, text="Next", command=self.show_next_screen).pack(pady=10)
-        tk.Button(image_frame, text="Back", command=self.show_previous_screen).pack(pady=10)
+        tk.Button(image_frame, text="Next", command=self.show_next_screen).pack(pady=10, anchor='s')
+        tk.Button(image_frame, text="Back", command=self.show_previous_screen).pack(pady=10, anchor='s')
         self.screens.append(image_frame)
         
-        # Image processing options screen
+        # Options screen
         options_frame = tk.Frame(master)
         tk.Label(options_frame, text="Options:").pack(pady=10)
         
         self.palette_var = tk.StringVar()
-        example_palettes = ["Dreamscape8", "SLSO8", "Oil 6"]
-        tk.Label(options_frame, text="Choose a palette:").pack()
-        tk.OptionMenu(options_frame, self.palette_var, *example_palettes).pack()
+        self.palette_var.set('./palettes/dreamscape8-1x.png')
+        self.example_palettes = ["./palettes/dreamscape8-1x.png", "./palettes/oil-6-1x.png", "./palettes/slso8-1x.png"]
+        tk.Label(options_frame, text="Choose a palette:").pack(pady=10)
+        tk.OptionMenu(options_frame, self.palette_var, *self.example_palettes).pack(pady=10)
         '''
         Need to figure out how to set the palette file as palette_var based on the name listed in the dropdown
         Displayed palette names are not and should not be the same as the file path
         '''
 
-        tk.Button(options_frame, text="Process Image", command=self.process_image).pack()
-        tk.Button(options_frame, text="Back", command=self.show_previous_screen).pack()
+        tk.Button(options_frame, text="Process Image", command=self.process_image).pack(pady=10, anchor='s')
+        tk.Button(options_frame, text="Back", command=self.show_previous_screen).pack(pady=10, anchor='s')
         self.screens.append(options_frame)
         
         #final screen
         final_frame = tk.Frame(master)
         tk.Label(final_frame, text="Final Image:").pack(pady=10)
+        self.final_image_label = tk.Label(final_frame, image=None)  # Placeholder image
+        self.final_image_label.pack()
+        self.bigger_image_label = tk.Label(final_frame, image=None)  # Placeholder image
+        self.bigger_image_label.pack()
+        tk.Button(final_frame, text="Start Over", command=self.restart_program).pack(pady=10)
         self.screens.append(final_frame)
 
         # Show the initial screen
         self.show_current_screen()
 
     def process_image(self):
-        self.show_next_screen
         image_path = self.selected_image_path.get()
         scale = (32,32)
         palette = self.palette_var.get()
@@ -68,13 +75,26 @@ class SimpleWizard:
             pal = get_image(palette)
             small = pixl8(im, scale)
             palettized = palettizer(small, pal)
-            
+            processed = ImageTk.PhotoImage(palettized)
+            self.processed_image = processed
+            self.final_image_label.config(image=self.processed_image)
+            self.final_image_label.image = self.processed_image
+            zoom = 8
+            resized_image = palettized.resize((scale[0]*zoom, scale[1]*zoom), Image.NEAREST)
+            self.resized = ImageTk.PhotoImage(resized_image)
+            self.bigger_image_label.config(image=self.resized)
+            self.bigger_image_label.image = self.resized
+            self.current_screen += 1
+            self.show_current_screen()
+
+    def restart_program(self):
+        self.current_screen = 0
+        self.show_current_screen()
 
     def show_current_screen(self):
         # Hide all screens
         for screen in self.screens:
             screen.pack_forget()
-
         # Show the current screen
         self.screens[self.current_screen].pack()
 
