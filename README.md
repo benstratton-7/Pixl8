@@ -1,6 +1,8 @@
 # Pixl8
 A tool to turn an input image into a new pixelated version that fits your color palette. Great for video game asset creation
 
-The first version is working!
-After many many hours of troubleshooting, I finally realized all my problems would be solved if i saved the output as a png. so now this app is designed to create a png image!
-There is no polish or anything yet but if you know basic python you can definitely figure out how to use this. run in terminal and use the filepath of the image you want to pixl8 and it will run the program using my default palette.
+## Update Notes
+version 1.0 is complete. I got a working gui up and running so you can just run gui.py, and go through the wizard to see how it works. It needs a lot of polish to be useable but this definitely is a good proof of concept/mvp type of thing!
+
+## How to use
+run gui.py, choose an image to pixl8, choose from the provided palettes(have to add the ability to upload your own palette later), and click process image! the final screen shows two version of your image. one is actual size relative to the window, and the other is blown up so you can see it better.
