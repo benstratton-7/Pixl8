@@ -24,13 +24,18 @@ class SimpleWizard:
         tk.Button(image_frame, text="Browse", command=self.browse_image).pack(pady=30)
         self.selected_image_path = tk.StringVar()
         self.selected_image_path.set('./example images/matt-damon.jpg')
-        self.image_label = tk.Label(image_frame, textvariable=self.selected_image_path)
-        self.image_label.pack()
+        # self.image_label = tk.Label(image_frame, textvariable=self.selected_image_path)
+        # self.image_label.pack()
         # Dropdown for example images
         example_images = ["./example images/matt-damon.jpg", "./example images/DALLE lighthouse.png", "./example images/knight.jpg"]
         example_dropdown = tk.OptionMenu(image_frame, self.selected_image_path, *example_images)
         example_dropdown.pack(pady=10)
-
+        #show selected image
+        self.pre_image = Image.open(self.selected_image_path.get())
+        resized = self.make_preview_image(self.pre_image)
+        self.pre_image = ImageTk.PhotoImage(resized)
+        self.pre_image_label = tk.Label(image_frame, image=self.pre_image)
+        self.pre_image_label.pack(pady=10)
         tk.Button(image_frame, text="Next", command=self.show_next_screen).pack(pady=10, anchor='s')
         tk.Button(image_frame, text="Back", command=self.show_previous_screen).pack(pady=10, anchor='s')
         self.screens.append(image_frame)
@@ -44,10 +49,6 @@ class SimpleWizard:
         self.example_palettes = ["./palettes/dreamscape8-1x.png", "./palettes/oil-6-1x.png", "./palettes/slso8-1x.png"]
         tk.Label(options_frame, text="Choose a palette:").pack(pady=10)
         tk.OptionMenu(options_frame, self.palette_var, *self.example_palettes).pack(pady=10)
-        '''
-        Need to figure out how to set the palette file as palette_var based on the name listed in the dropdown
-        Displayed palette names are not and should not be the same as the file path
-        '''
 
         tk.Button(options_frame, text="Process Image", command=self.process_image).pack(pady=10, anchor='s')
         tk.Button(options_frame, text="Back", command=self.show_previous_screen).pack(pady=10, anchor='s')
@@ -65,6 +66,13 @@ class SimpleWizard:
 
         # Show the initial screen
         self.show_current_screen()
+
+    def make_preview_image(self, im):
+        pre_width, pre_heigth = im.size
+        ar = pre_width / pre_heigth
+        neww = 400
+        newh = neww/ar
+        return im.resize((int(neww), int(newh)))
 
     def process_image(self):
         image_path = self.selected_image_path.get()
