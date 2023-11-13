@@ -21,21 +21,19 @@ class SimpleWizard:
         # Image selection screen
         image_frame = tk.Frame(master)
         tk.Label(image_frame, text="Select an image file:").pack(pady=10)
-        tk.Button(image_frame, text="Browse", command=self.browse_image).pack(pady=30)
+        #show selected image
+        self.preview_label = tk.Label(image_frame, text='Image Preview', image=None)
+        self.preview_label.pack(pady=10)
+        tk.Button(image_frame, text="Browse", command=self.browse_image).pack(pady=10)
         self.selected_image_path = tk.StringVar()
         self.selected_image_path.set('./example images/matt-damon.jpg')
-        # self.image_label = tk.Label(image_frame, textvariable=self.selected_image_path)
-        # self.image_label.pack()
+        self.image_label = tk.Label(image_frame, textvariable=self.selected_image_path, wraplength=200)
+        self.image_label.pack()
         # Dropdown for example images
+        tk.Label(image_frame, text="OR\n\nuse an example image from the dropdown below:").pack(pady=10)
         example_images = ["./example images/matt-damon.jpg", "./example images/DALLE lighthouse.png", "./example images/knight.jpg"]
-        example_dropdown = tk.OptionMenu(image_frame, self.selected_image_path, *example_images)
+        example_dropdown = tk.OptionMenu(image_frame, self.selected_image_path, *example_images, command=self.make_preview_image())
         example_dropdown.pack(pady=10)
-        #show selected image
-        self.pre_image = Image.open(self.selected_image_path.get())
-        resized = self.make_preview_image(self.pre_image)
-        self.pre_image = ImageTk.PhotoImage(resized)
-        self.pre_image_label = tk.Label(image_frame, image=self.pre_image)
-        self.pre_image_label.pack(pady=10)
         tk.Button(image_frame, text="Next", command=self.show_next_screen).pack(pady=10, anchor='s')
         tk.Button(image_frame, text="Back", command=self.show_previous_screen).pack(pady=10, anchor='s')
         self.screens.append(image_frame)
@@ -67,12 +65,18 @@ class SimpleWizard:
         # Show the initial screen
         self.show_current_screen()
 
-    def make_preview_image(self, im):
-        pre_width, pre_heigth = im.size
-        ar = pre_width / pre_heigth
-        neww = 400
-        newh = neww/ar
-        return im.resize((int(neww), int(newh)))
+    def make_preview_image(self):
+        fp = self.selected_image_path.get()
+        if fp:
+            im = get_image(fp)
+            pre_width, pre_heigth = im.size
+            ar = pre_width / pre_heigth
+            neww = 400
+            newh = neww/ar
+            resized =  im.resize((int(neww), int(newh)))
+            prev = ImageTk.PhotoImage(resized)
+            self.preview_label.config(image=prev)
+            self.preview_label.image = prev
 
     def process_image(self):
         image_path = self.selected_image_path.get()
@@ -122,10 +126,11 @@ class SimpleWizard:
         file_path = filedialog.askopenfilename(filetypes=[("Image files", "*.png;*.jpg;*.jpeg;*.gif")])
         if file_path:
             self.selected_image_path.set(file_path)
+            self.make_preview_image()
 
 if __name__ == "__main__":
     root = tk.Tk()
-    root.geometry("600x400")
+    root.geometry("600x600")
     wizard = SimpleWizard(root)
     root.mainloop()
 
