@@ -56,7 +56,7 @@ def input_file():
         print(f"\nno input file detected\n{e}\n")
 
 # takes an image and resolution, and returns a copy of that image in the desired resolution
-def pixl8(im, res = (32, 32)):
+def pixl8(im, w=32):
     """
     Resizes the input image to the specified resolution using nearest-neighbor interpolation.
     Args:
@@ -65,7 +65,9 @@ def pixl8(im, res = (32, 32)):
     Returns:
         PIL.Image.Image: The resized image object.
     """
-    small = im.resize(res, Image.NEAREST)
+    ar = im.width / im.height
+    h = int(w/ar)
+    small = im.resize((w,h), Image.NEAREST)
     return small
 
 # returns the euclidean distance between two rgb values
@@ -130,6 +132,18 @@ def palettizer(im, p):
     im_d_reshaped = np.clip(im_d_reshaped, 0, 255).astype('uint8')
     new_im = Image.fromarray(im_d_reshaped)
     return new_im
+
+def make_image_fit(im):
+    pre_width, pre_height = im.size
+    ar = pre_width / pre_height
+    neww = 400
+    newh = neww/ar
+    if newh > 400:
+        ah = 400
+        aw = ar*ah
+        return im.resize((int(aw),int(ah)))
+    else:
+        return  im.resize((int(neww), int(newh)))
 
 def main():
     sample_palette = get_image("./dreamscape8-1x.png")

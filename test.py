@@ -1,56 +1,50 @@
 import tkinter as tk
-from tkinter import filedialog
-from PIL import Image, ImageTk
 
-class ImageManipulationApp:
-    def __init__(self, root):
-        self.root = root
-        self.root.title("Image Manipulation App")
+def resize_window(event):
+    canvas.configure(scrollregion=canvas.bbox("all"))
+    window_width = max(frame.winfo_reqwidth(), 300)  # 300 is a minimum width
+    window_height = max(frame.winfo_reqheight(), 300)  # 200 is a minimum height
+    window.geometry("{}x{}".format(window_width, window_height))
 
-        # Variables
-        self.image_path = tk.StringVar()
-        self.preview_image = None
+window = tk.Tk()
+window.title("Resizable Window")
 
-        # GUI elements
-        self.create_widgets()
+canvas = tk.Canvas(window)
+canvas.pack(side="top", fill="both", expand=True)
 
-    def create_widgets(self):
-        # File Browser Button
-        file_button = tk.Button(self.root, text="Select Image", command=self.browse_image)
-        file_button.pack(pady=10)
+scrollbar = tk.Scrollbar(window, command=canvas.yview)
+scrollbar.pack(side="right", fill="y")
 
-        # Preview Image Label
-        self.preview_label = tk.Label(self.root, text="Preview Image")
-        self.preview_label.pack(pady=10)
+canvas.configure(yscrollcommand=scrollbar.set)
 
-        # Next Steps Button (replace this with your next steps functionality)
-        next_button = tk.Button(self.root, text="Next Steps", command=self.next_steps)
-        next_button.pack(pady=10)
+frame = tk.Frame(canvas)
+canvas.create_window((0, 0), window=frame, anchor="nw")
 
-    def browse_image(self):
-        file_path = filedialog.askopenfilename(title="Select Image", filetypes=[("Image files", "*.png;*.jpg;*.jpeg;*.gif")])
+# Your widgets go here
+label = tk.Label(frame, text="Hello, World!")
+label.pack(pady=10, side="left")
+label = tk.Label(frame, text="Hello, World!")
+label.pack(pady=10, side="left")
+label = tk.Label(frame, text="Hello, World!")
+label.pack(pady=10, side="left")
+label = tk.Label(frame, text="Hello, World!")
+label.pack(pady=10, side="left")
+label = tk.Label(frame, text="Hello, World!")
+label.pack(pady=10, side="left")
+label = tk.Label(frame, text="Hello, World!")
+label.pack(pady=10, side="left")
+label = tk.Label(frame, text="Hello, World!")
+label.pack(pady=10, side="left")
+label = tk.Label(frame, text="Hello, World!")
+label.pack(pady=10, side="left")
+label = tk.Label(frame, text="Hello, World!")
+label.pack(pady=10, side="left")
+label = tk.Label(frame, text="Hello, World!")
+label.pack(pady=10, side="left")
+label = tk.Label(frame, text="Hello, World!")
+label.pack(pady=10, side="left")
 
-        if file_path:
-            self.image_path.set(file_path)
-            self.update_preview_image()
+# Bind the resize function to the window resize event
+window.bind("<Configure>", resize_window)
 
-    def update_preview_image(self):
-        image_path = self.image_path.get()
-
-        if image_path:
-            image = Image.open(image_path)
-            image = image.resize((200, 200))  # Adjust size as needed
-            photo = ImageTk.PhotoImage(image)
-
-            # Update the preview label
-            self.preview_label.config(image=photo)
-            self.preview_label.image = photo  # Keep a reference to avoid garbage collection issues
-
-    def next_steps(self):
-        # Add your logic for the next steps after image selection here
-        pass
-
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = ImageManipulationApp(root)
-    root.mainloop()
+window.mainloop()
