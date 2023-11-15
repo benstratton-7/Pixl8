@@ -61,7 +61,7 @@ def pixl8(im, w=32):
     Resizes the input image to the specified resolution using nearest-neighbor interpolation.
     Args:
         im (PIL.Image.Image): The input image object.
-        res (tuple): A tuple representing the desired resolution (width, height).
+        res (tuple): A integer representing the desired resolution width
     Returns:
         PIL.Image.Image: The resized image object.
     """
@@ -133,13 +133,13 @@ def palettizer(im, p):
     new_im = Image.fromarray(im_d_reshaped)
     return new_im
 
-def make_image_fit(im):
+def make_image_fit(im, size = 300):
     pre_width, pre_height = im.size
     ar = pre_width / pre_height
-    neww = 400
+    neww = size
     newh = neww/ar
-    if newh > 400:
-        ah = 400
+    if newh > size:
+        ah = size
         aw = ar*ah
         return im.resize((int(aw),int(ah)))
     else:
