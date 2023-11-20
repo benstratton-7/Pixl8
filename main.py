@@ -56,7 +56,7 @@ def input_file():
         print(f"\nno input file detected\n{e}\n")
 
 # takes an image and resolution, and returns a copy of that image in the desired resolution
-def pixl8(im, w=32):
+def pixl8(im, w=64):
     """
     Resizes the input image to the specified resolution using nearest-neighbor interpolation.
     Args:
@@ -144,12 +144,3 @@ def make_image_fit(im, size = 300):
         return im.resize((int(aw),int(ah)))
     else:
         return  im.resize((int(neww), int(newh)))
-
-def main():
-    sample_palette = get_image("./dreamscape8-1x.png")
-    in_f_name = input_file()
-    og_image = get_image(in_f_name)
-    im1 = pixl8(og_image)
-    im2 = palettizer(im1, sample_palette)
-    im2.save(f'{output_file_name()}.png')
-    print(f"saved images")
