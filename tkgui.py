@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import filedialog
+from ttkthemes import ThemedTk
 from PIL import Image, ImageTk
 from main import palettizer, get_image, pixl8, make_image_fit
 
@@ -24,16 +25,14 @@ class SimpleWizard:
         # Left frame for image selection
         left_frame = tk.Frame(image_frame)
         tk.Label(left_frame, text="Select an image file:").pack(pady=10)
-        self.preview_label = tk.Label(left_frame, text='Image Preview', image=None)
-        self.preview_label.pack(pady=10)
+        # self.preview_label = tk.Label(left_frame, text='Image Preview', image=None)
+        # self.preview_label.pack(pady=10)
         tk.Button(left_frame, text="Browse", command=self.browse_image).pack(pady=10)
         self.selected_image_path = tk.StringVar()
         self.selected_image_path.set('./example images/matt-damon.jpg')
         self.image_label = tk.Label(left_frame, textvariable=self.selected_image_path, wraplength=200)
         self.image_label.pack()
         example_images = ["./example images/matt-damon.jpg", "./example images/DALLE lighthouse.png", "./example images/knight.jpg"]
-        example_dropdown = tk.OptionMenu(left_frame, self.selected_image_path, *example_images, command=self.make_preview_image)
-        example_dropdown.pack(pady=10)
         tk.Button(left_frame, text="Next", command=self.show_next_screen).pack(pady=10, anchor='s')
         tk.Button(left_frame, text="Back", command=self.show_previous_screen).pack(pady=10, anchor='s')
         left_frame.pack(side="left", padx=20)
@@ -42,6 +41,8 @@ class SimpleWizard:
         right_frame = tk.Frame(image_frame)
         self.preview_image_frame = tk.Label(right_frame, text='Image Preview', image=None)
         self.preview_image_frame.pack(pady=10)
+        for image in example_images:
+            tk.Button(right_frame, text=image[17:], command=self.helper(image)).pack(padx=10,pady=10)
         right_frame.pack(side="right", padx=20)
         self.screens.append(image_frame)
         
@@ -63,23 +64,29 @@ class SimpleWizard:
         final_frame = tk.Frame(master)
         tk.Label(final_frame, text="Final Image:").pack(pady=10)
         self.init_image_label = tk.Label(final_frame, image=None)  # Placeholder image
-        self.init_image_label.pack()
+        self.init_image_label.pack(side="left")
         self.bigger_image_label = tk.Label(final_frame, image=None)  # Placeholder image
-        self.bigger_image_label.pack()
+        self.bigger_image_label.pack(side="right")
         tk.Button(final_frame, text="Start Over", command=self.restart_program).pack(pady=10)
         self.screens.append(final_frame)
 
         # Show the initial screen
         self.show_current_screen()
 
+    def helper(self, filepath):
+        print(filepath)
+        self.selected_image_path.set(filepath)
+        print(self.selected_image_path)
+        self.make_preview_image()
+
     def make_preview_image(self):
         fp = self.selected_image_path.get()
         if fp:
             im = get_image(fp)
             resized = make_image_fit(im)
-            prev = ImageTk.PhotoImage(resized)
-            self.preview_label.config(image=prev)
-            self.preview_label.image = prev
+            # prev = ImageTk.PhotoImage(resized)
+            # self.preview_label.config(image=prev)
+            # self.preview_label.image = prev
             # Update the preview in the right frame
             prev_right = ImageTk.PhotoImage(resized)
             self.preview_image_frame.config(image=prev_right)
@@ -97,12 +104,11 @@ class SimpleWizard:
             palettized = palettizer(small, pal)
             processed = ImageTk.PhotoImage(palettized)
             self.processed_image = processed
-            zoom = 8
             resized_image = palettized.resize((int(im.width/2), int(im.height/2)), Image.NEAREST)
             self.resized = ImageTk.PhotoImage(resized_image)
             self.bigger_image_label.config(image=self.resized)
             self.bigger_image_label.image = self.resized
-            og = ImageTk.PhotoImage(make_image_fit(im))
+            og = ImageTk.PhotoImage(make_image_fit(im, 100))
             self.init_image_label.config(image=og)
             self.init_image_label.image = og
             self.current_screen += 1
@@ -138,8 +144,7 @@ class SimpleWizard:
             self.make_preview_image()
 
 if __name__ == "__main__":
-    root = tk.Tk()
-    root.geometry("500x750")
+    root = ThemedTk(theme="arc")
+    root.geometry("600x400")
     wizard = SimpleWizard(root)
     root.mainloop()
-
