@@ -1,7 +1,9 @@
+from datetime import datetime
 import math
 from PIL import Image
 import numpy as np
 import sys
+import os
 
 # opens the image file as a pil image object
 def get_image(filename):
@@ -134,6 +136,16 @@ def palettizer(im, p):
     return new_im
 
 def make_image_fit(im, size = 300):
+    """
+    Resizes an image while maintaining its aspect ratio to fit within a specified size.
+
+    Parameters:
+    - im: PIL Image object, the input image to be resized.
+    - size: int, the maximum size (width or height) the image should fit within.
+
+    Returns:
+    - PIL Image object, the resized image.
+    """
     pre_width, pre_height = im.size
     ar = pre_width / pre_height
     neww = size
@@ -141,6 +153,21 @@ def make_image_fit(im, size = 300):
     if newh > size:
         ah = size
         aw = ar*ah
-        return im.resize((int(aw),int(ah)))
+        return im.resize((int(aw),int(ah)), Image.NEAREST)
     else:
-        return  im.resize((int(neww), int(newh)))
+        return  im.resize((int(neww), int(newh)), Image.NEAREST)
+
+def make_rand_file_name(infile):
+    """
+    Generates a random filename for a given input file.
+
+    Parameters:
+    - infile: str, the path to the input file.
+
+    Returns:
+    - str, a randomly generated filename with a prefix 'Pixl8ed_' and a timestamp.
+    """
+    infilename = os.path.basename(os.path.normpath(infile))
+    time = datetime.now().time()
+    timeid = str(time)
+    return 'Pixl8ed_' + infilename +''.join(filter(str.isdigit, timeid))
