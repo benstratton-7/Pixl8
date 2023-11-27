@@ -80,16 +80,30 @@ class SimpleWizard:
 
         #final screen
         final_frame = tk.Frame(master)
-        tk.Label(final_frame, text="Final Image:").pack(pady=10)
-        self.init_image_label = tk.Label(final_frame, image=None)
-        self.init_image_label.pack(side="left")
-        self.bigger_image_label = tk.Label(final_frame, image=None)
-        self.bigger_image_label.pack(side="right")
-        tk.Button(final_frame, text="Start Over", command=self.restart_program).pack(pady=10, padx=10)
         self.bigger_image = None
         self.proccessed_image = None
-        tk.Button(final_frame, text='Save Image (actual size)', command=self.save_final_image).pack(pady=10)
-        tk.Button(final_frame, text='Save Image (Enlarged)', command=self.save_enlarged_image).pack(pady=10)
+        
+        # initial image frame
+        init_image_frame = tk.Frame(final_frame)
+        tk.Label(init_image_frame, text="Input Image:").pack(pady=10)
+        self.init_image_label = tk.Label(init_image_frame, image=None)
+        self.init_image_label.pack()
+        init_image_frame.pack(side="left")
+        
+        #processed image frame
+        processed_image_frame = tk.Frame(final_frame)
+        tk.Label(processed_image_frame, text="Final Image:").pack(pady=10)
+        self.bigger_image_label = tk.Label(processed_image_frame, image=None)
+        self.bigger_image_label.pack()
+        processed_image_frame.pack(side='right')
+        
+        #buttons frame
+        final_buttons_frame = tk.Frame(final_frame)
+        tk.Button(final_buttons_frame, text="Start Over", command=self.restart_program).pack(side='bottom', pady= 50)
+        tk.Button(final_buttons_frame, text='Save Image (Actual Size)', command=self.save_final_image).pack(pady=5)
+        tk.Button(final_buttons_frame, text='Save Image (Enlarged)', command=self.save_enlarged_image).pack(pady=5)
+        final_buttons_frame.pack(padx=5, side='bottom')
+        
         self.screens.append(final_frame)
 
         # Show the initial screen
@@ -110,7 +124,7 @@ class SimpleWizard:
             self.resized = ImageTk.PhotoImage(fit)
             self.bigger_image_label.config(image=self.resized)
             self.bigger_image_label.image = self.resized
-            og = ImageTk.PhotoImage(make_image_fit(im, 100))
+            og = ImageTk.PhotoImage(make_image_fit(im))
             self.init_image_label.config(image=og)
             self.init_image_label.image = og
             self.current_screen += 1
