@@ -1,5 +1,6 @@
 # Pixl8
 A tool to turn an input image into a new pixelated version that fits your color palette. Great for video game asset creation
+![Untitled design(1)](https://github.com/benstratton-7/Pixl8/assets/109835020/bb46896a-b8c5-400a-b8cb-08b226846690)
 
 ## Update Notes
 Version 1.2 is complete. Now you can download the package and run Pixl8.exe on any machine. 
