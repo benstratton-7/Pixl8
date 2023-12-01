@@ -3,7 +3,11 @@ A tool to turn an input image into a new pixelated version that fits your color 
 ![Untitled design(1)](https://github.com/benstratton-7/Pixl8/assets/109835020/bb46896a-b8c5-400a-b8cb-08b226846690)
 
 ## Update Notes
-Version 1.2 is complete. Now you can download the package and run Pixl8.exe on any machine. 
+Version 1.2.1:
+
+  -Now supports more image types
+    -can hangle png images and most image types that include alpha values.
+  -fixed bug on creating file names, and simplified the process
 
 
 ## How to use GUI without python
