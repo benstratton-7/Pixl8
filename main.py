@@ -82,8 +82,8 @@ def euclidean_distance(c1,c2):
     Returns:
         float: The Euclidean distance between the two RGB colors.
     """
-    r1, g1, b1 = c1
-    r2, g2, b2 = c2
+    r1, g1, b1 = c1[:3]
+    r2, g2, b2 = c2[:3]
     return math.sqrt((r1-r2)**2 + (g1-g2)**2 + (b1-b2)**2)
 
 # takes a single rgb value, and a palette of colors as an array, and returns whatever color in the palette is closest to the input pixel
@@ -121,6 +121,8 @@ def palettizer(im, p):
     # turns the input palette into the PIL 'palette' type object. idk if this is 100% necessary, but it works well this way
     p = p.convert("P")
     p1 = p.getpalette()
+    #turn the input image into rgb mode. this is neccessary for using png images as inputs
+    im = im.convert("RGB")
     #creates an array of rgb values representing the palette
     p2 = [p1[i:i + 3] for i in range(0, len(p1), 3)]
     #turns the input image into a flattened array of rgb values
@@ -168,6 +170,7 @@ def make_rand_file_name(infile):
     - str, a randomly generated filename with a prefix 'Pixl8ed_' and a timestamp.
     """
     infilename = os.path.basename(os.path.normpath(infile))
+    new_infilename, extension = os.path.splitext(infilename)
     time = datetime.now().time()
     timeid = str(time)
-    return 'Pixl8ed_' + infilename +''.join(filter(str.isdigit, timeid))
+    return 'Pixl8ed_' + new_infilename + '_' + ''.join(filter(str.isdigit, timeid))
