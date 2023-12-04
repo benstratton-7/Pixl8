@@ -64,7 +64,7 @@ class SimpleWizard:
         #palete preview frame
         palette_preview_frame = tk.Frame(options_frame)
         self.palette_preview = tk.Label(palette_preview_frame, text='Palette Preview', image=None)
-        self.palette_preview.pack(side='left')
+        self.palette_preview.pack(side='left', padx=40)
         tk.Button(palette_preview_frame, text="Add a custom palette", command=self.browse_palette).pack(side="right")
         palette_preview_frame.pack(pady=5)
 
@@ -76,6 +76,11 @@ class SimpleWizard:
         tk.Label(image_size_frame, text='Image Size:').pack(pady=10, side='left')
         tk.OptionMenu(image_size_frame, self.size_var, *self.size_options).pack(pady = 10, side='right')
         image_size_frame.pack(pady=5)
+        
+        #info frame
+        info_frame = tk.Frame(options_frame)
+        tk.Label(info_frame, justify="center", wraplength=300, text='Palettes should be a 1xN image with whatever colors you want. Inputing other images should not break the app, but will not work as intended.').pack()
+        info_frame.pack()
         
         #buttons frame
         options_screen_buttons_frame = tk.Frame(options_frame)
@@ -216,7 +221,6 @@ class SimpleWizard:
             self.make_preview_palette()
             
     def pal_update_dropdown(self, *args):
-        print(*args)
         self.make_preview_palette()
 
 
