@@ -58,7 +58,15 @@ class SimpleWizard:
         self.example_palettes = ["./palettes/dreamscape8-1x.png", "./palettes/oil-6-1x.png", "./palettes/slso8-1x.png"]
         tk.Label(palette_frame, text="Choose a palette:").pack(side='left')
         tk.OptionMenu(palette_frame, self.palette_var, *self.example_palettes).pack(side="right")
+        self.palette_var.trace('w', self.pal_update_dropdown)
         palette_frame.pack(pady=5)
+        
+        #palete preview frame
+        palette_preview_frame = tk.Frame(options_frame)
+        self.palette_preview = tk.Label(palette_preview_frame, text='Palette Preview', image=None)
+        self.palette_preview.pack(side='left')
+        tk.Button(palette_preview_frame, text="Add a custom palette", command=self.browse_palette).pack(side="right")
+        palette_preview_frame.pack(pady=5)
 
         #image size frame
         image_size_frame = tk.Frame(options_frame)
@@ -73,7 +81,7 @@ class SimpleWizard:
         options_screen_buttons_frame = tk.Frame(options_frame)
         tk.Button(options_screen_buttons_frame, text="Process Image", command=self.process_image).pack(padx=5, side="right")
         tk.Button(options_screen_buttons_frame, text="Back", command=self.show_previous_screen).pack(padx=5, side='left')
-        options_screen_buttons_frame.pack(pady= 50, anchor='s')
+        options_screen_buttons_frame.pack(pady=40, anchor='s')
         
         self.screens.append(options_frame)
 
@@ -163,6 +171,15 @@ class SimpleWizard:
             self.preview_image_frame.config(image=prev_right)
             self.preview_image_frame.image = prev_right
 
+    def make_preview_palette(self):
+        fp = self.palette_var.get()
+        if fp:
+            im = get_image(fp)
+            resim = make_image_fit(im, 150)
+            prev = ImageTk.PhotoImage(resim)
+            self.palette_preview.config(image=prev)
+            self.palette_preview.image = prev
+
     def restart_program(self):
         self.current_screen = 0
         self.show_current_screen()
@@ -191,6 +208,17 @@ class SimpleWizard:
         if file_path:
             self.selected_image_path.set(file_path)
             self.make_preview_image()
+
+    def browse_palette(self):
+        file_path = filedialog.askopenfilename(filetypes=[("Image files", "*.png;*.jpg;*.jpeg;*.gif")])
+        if file_path:
+            self.palette_var.set(file_path)
+            self.make_preview_palette()
+            
+    def pal_update_dropdown(self, *args):
+        print(*args)
+        self.make_preview_palette()
+
 
 if __name__ == "__main__":
     root = ThemedTk(theme="arc")
