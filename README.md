@@ -3,11 +3,9 @@ A tool to turn an input image into a new pixelated version that fits your color 
 ![Untitled design(1)](https://github.com/benstratton-7/Pixl8/assets/109835020/bb46896a-b8c5-400a-b8cb-08b226846690)
 
 ## Update Notes
-Version 1.2.3:
+Version 1.24:
 
-  -Now supports more image types
-    -can hangle png images and most image types that include alpha values.
-    -fixed bug on creating file names, and simplified the process
+  -Added some more included palettes
 
 P.S. You might need to expand the window on certain frames to fit all the options and buttons on the screen.
 
